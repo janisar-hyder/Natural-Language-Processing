@@ -1,0 +1,199 @@
+import re
+text = 'I\'m with you for the entire life in U.K.!'
+words = re.split(r'\W+', text)
+print(words)
+words = text.split()
+words = [word.lower() for word in words]
+re_punc = re.compile('[%s]' % re.escape(string.punctuation))
+stripped = [re_punc.sub('', w) for w in words]
+print(stripped)
+
+import spacy
+nlp = spacy.load('en_core_web_sm')
+doc3 = nlp(u'A 5km NYC cab ride costs $10.30')
+for t in doc3:
+    print(t,end=" | ")
+len(doc)
+len(doc.vocab)
+doc3[2]
+doc3[-4:]
+doc6[3].text = doc7[3].text
+doc8 = nlp(u'Apple to build a Hong Kong factory for $6 million')
+for ent in doc8.ents:
+    print(ent.text+' - '+ent.label_+' - '+str(spacy.explain(ent.label_)))
+print(len(doc8.ents))
+for chunk in doc8.noun_chunks:
+    print(chunk.text)
+
+## ---------------------------------------- code for Stopwords --------------------------------- ##
+
+import spacy
+nlp = spacy.load('en_core_web_sm')
+import nltk
+nltk.download('stopwords')
+
+print(nlp.Defaults.stop_words)
+print(len(nlp.Defaults.stop_words))
+print(nlp.vocab['myself'].is_stop)
+nlp.Defaults.stop_words.add('mystery')
+nlp.vocab['mystery'].is_stop = True
+nlp.Defaults.stop_words.remove('beyond')
+nlp.vocab['beyond'].is_stop = False
+
+import string
+import re
+import nltk
+nltk.download('punkt')
+from nltk import word_tokenize,sent_tokenize
+from nltk.corpus import stopwords
+text = 'The Quick brown fox jump over the lazy dog!'
+
+tokens = word_tokenize(text)
+re_punc = re.compile('[%s]' % re.escape(string.punctuation))
+stripped = [re_punc.sub('', w) for w in tokens]
+words = [word for word in stripped if word.isalpha()]
+stop_words = set(stopwords.words('english'))
+words = [w for w in words if not w in stop_words]
+print(words)
+
+## ---------------------------------------- code for Matcher ----------------------------------- ##
+
+import spacy
+nlp = spacy.load('en_core_web_sm')
+from spacy.matcher import Matcher
+matcher = Matcher(nlp.vocab)
+
+pattern1 = [{'LOWER': 'solarpower'}]
+pattern2 = [{'LOWER': 'solar'}, {'IS_PUNCT': True, 'OP':'*'}, {'LEMMA': 'power'}] # CHANGE THIS PATTERN
+matcher.remove('SolarPower')
+matcher.add('SolarPower', [pattern1])
+matcher.add('SolarPower', [pattern2])
+doc2 = nlp(u'Solar-powered energy runs solar-powered cars.')
+found_matches = matcher(doc2)
+print(found_matches)
+
+## -------------------------------------- code for POS Tagging -------------------------------- ##
+
+import spacy
+nlp = spacy.load("en_core_web_sm")
+doc = nlp("Apple is looking at buying U.K. startup for $1 billion")
+
+print(token.text, token.lemma_, token.pos_, token.tag_, token.dep_,token.shape_, token.is_alpha, token.is_stop)
+print(f'{token.text:{10}} {token.pos_:{8}} {token.tag_:{6}} {spacy.explain(token.tag_)}')
+doc = nlp(u"The quick brown fox jumped over the lazy dog's back.")
+# Count the frequencies of different coarse-grained POS tags:
+POS_counts = doc.count_by(spacy.attrs.POS)
+print(POS_counts)
+doc.vocab[97].text
+print(POS_counts.items())
+for k,f in sorted(POS_counts.items()):
+    print(f'{k}. {doc.vocab[k].text:{5}}: {f}')
+TAG_counts = doc.count_by(spacy.attrs.TAG)
+for k,f in sorted(TAG_counts.items()):
+    print(f'{k}. {doc.vocab[k].text:{4}}: {f}')
+DEP_counts = doc.count_by(spacy.attrs.DEP)
+
+import spacy
+nlp = spacy.load('en_core_web_sm')
+# Import the displaCy library
+from spacy import displacy
+doc = nlp(u"The quick brown fox jumped over the lazy dog's back.")
+displacy.render(doc, style='dep', jupyter=True, options={'distance': 110})
+
+## -------------------------------------- code for Lemmatization And Stemming -------------------------------- ##
+
+import nltk
+from nltk.stem.porter import *
+p_stemmer = PorterStemmer()
+words = ['run','runner','running','ran','runs','easily','fairly']
+for word in words:
+    print(word+' --> '+p_stemmer.stem(word))
+
+from nltk.stem.snowball import SnowballStemmer
+s_stemmer = SnowballStemmer(language='english')
+text="Run runner running ran runs easily dairly"
+import nltk 
+from nltk import word_tokenize
+words=word_tokenize(text)
+for word in words:
+    print(word+' --> '+s_stemmer.stem(word))
+
+import spacy
+nlp = spacy.load('en_core_web_sm')
+var1 = nlp(u"John Adam is one the researcher who invent the direction of way towards success!")
+for token in var1:
+    print(token.text, '\t', token.pos_, '\t', token.lemma, '\t', token.lemma_)
+
+
+## -------------------------------------- code for Visualizing Named Entities -------------------------------- ##
+
+# Visualizing Named Entities
+import spacy
+nlp = spacy.load('en_core_web_sm')
+from spacy import displacy
+doc = nlp(u'Over the last quarter Apple sold nearly 20 thousand iPods for a profit of $6 million.'
+         u'By contrast, Sony sold only 7 thousand Walkman music players.')
+displacy.render(doc, style='ent', jupyter=True)
+
+## Viewing Sentences Line by Line
+for sent in doc.sents:
+    displacy.render(nlp(sent.text), style='ent', jupyter=True)
+
+##to not get any warning if no entity exist
+for sent in doc2.sents:
+    docx = nlp(sent.text)
+    if docx.ents:
+        displacy.render(docx, style='ent', jupyter=True)
+    else:
+        print(docx.text)
+
+## Viewing Specific Entities
+options = {'ents': ['ORG', 'PRODUCT']}
+displacy.render(doc, style='ent', jupyter=True, options=options)
+
+## Customizing Colors and Effects
+colors = {'ORG': 'linear-gradient(90deg, #aa9cfc, #fc9ce7)', 'PRODUCT': 'radial-gradient(yellow, green)'}
+options = {'ents': ['ORG', 'PRODUCT'], 'colors':colors}
+displacy.render(doc, style='ent', jupyter=True, options=options)
+
+## -------------------------------------- code for Sentence Segmentation -------------------------------- ##
+
+import spacy
+nlp = spacy.load('en_core_web_sm')
+doc = nlp(u'This is the first sentence. This is another sentence. This is the last sentence.')
+for sent in doc.sents:
+    print(sent)
+
+## You can't call the "second Doc sentence" with `print(doc.sents[1])`directly so use the below method for that
+doc_sents = [sent for sent in doc.sents]
+doc_sents[1]
+
+## Start and End sa token index in paragraph
+print(doc_sents[1].start, doc_sents[1].end)
+
+## token.is_sent_start return True Fale
+doc2 = nlp(u'This is a Sentence. This is a sentence. This is a sentence.')
+for token in doc2:
+    print(token.is_sent_start, ' '+token.text)
+for sent in doc2.sents:
+    print(sent)
+
+## Changing The Rules
+from spacy.pipeline import SentenceSegmenter
+
+def split_on_newlines(doc):
+    start = 0
+    seen_newline = False
+    for word in doc:
+        if seen_newline:
+            yield doc[start:word.i]
+            start = word.i
+            seen_newline = False
+        elif word.text.startswith('\n'): # handles multiple occurrences
+            seen_newline = True
+    yield doc[start:]      # handles the last group of tokens
+
+
+sbd = SentenceSegmenter(nlp.vocab, strategy=split_on_newlines)
+nlp.add_pipe(sbd)
+
